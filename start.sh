@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-open -na Emacs --args --init-dir "$(pwd)" "$@"
+open -na Emacs --args --chdir "$(pwd)" --init-dir "$(dirname "$0")" "$@"
