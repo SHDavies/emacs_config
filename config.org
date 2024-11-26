@@ -1,0 +1,51 @@
+#+title: Emacs Config
+
+* Base Settings
+
+** Package Management
+
+#+begin_src emacs-lisp
+(setq use-package-always-ensure t)
+#+end_src
+
+** Customization Saving
+
+Do not save customizations in =init.el=, instead save them in a temporary file
+that will be discarded. As a result, any customizations made in a session will
+not be persisted across sessions.
+
+#+begin_src emacs-lisp
+(setq custom-file (expand-file-name
+                   (format "custom-%d-%d.el" (emacs-pid) (random))
+                   temporary-file-directory))
+#+end_src
+
+** No Littering
+
+Move all common files typically written to the =user-emacs-directory= to the =var=
+and =etc= subdirectories so that they can be included in =.gitignore=
+
+#+begin_src emacs-lisp
+(use-package no-littering
+  :ensure (:wait t))
+#+end_src
+
+* Startup Time
+
+#+begin_src emacs-lisp
+(add-hook 'after-init-hook
+          (lambda ()
+            (let ((inhibit-message t))
+              (message "Emacs init time: %s" (emacs-init-time)))))
+#+end_src
+
+* User Interface
+
+** Vertico
+
+#+begin_src emacs-lisp
+(use-package vertico
+  :init
+  (vertico-mode))
+#+end_src
+
