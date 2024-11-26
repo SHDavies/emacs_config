@@ -1,7 +1,6 @@
 #+title: Emacs Config
 
 * Use Package
-
 ** Package Management
 
 #+begin_src emacs-lisp
@@ -21,7 +20,6 @@ need to be installed.
 #+end_src
 
 * Base Settings
-
 ** Customization Saving
 
 Do not save customizations in =init.el=, instead save them in a temporary file
@@ -85,8 +83,46 @@ separated by spaces. For example, "som thi" will match "this-is-some-thing".
         completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
-* Version Control
+* Projects
+** Tree Viewer (Treemacs)
 
+#+begin_src emacs-lisp
+(use-package treemacs
+  :bind ("s-b" . #'treemacs)
+  :config
+  (treemacs-follow-mode))
+#+end_src
+
+* File Types
+** Defaults
+*** Indentation
+
+Two space indentation by default.
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil
+              tab-width 2
+              smie-indent-basic 2)
+#+end_src
+
+** Shell
+
+#+begin_src emacs-lisp
+(use-feature shell
+  :config
+  (setq sh-basic-offset 2))
+#+end_src
+
+** Markdown
+
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :config
+  (add-hook 'markdown-mode-hook #'visual-line-mode)
+  (add-hook 'markdown-mode-hook #'visual-wrap-prefix-mode)
+  (setq markdown-list-indent-width 2))
+#+end_src
+
+* Version Control
 ** Magit
 #+begin_src emacs-lisp
 (use-package magit)
@@ -104,7 +140,53 @@ Install latest version of transient, as the version included in Emacs is not rec
               (message "Emacs init time: %s" (emacs-init-time)))))
 #+end_src
 
+* Assistance
+** Which Key
+
+#+begin_src emacs-lisp
+(use-feature which-key
+  :init
+  (which-key-mode))
+#+end_src
+
+** Helpful
+
+#+begin_src emacs-lisp
+(use-package helpful
+  :bind (
+         ;; Remap standard commands
+         ([remap describe-function] . #'helpful-callable)
+         ([remap describe-command] . #'helpful-command)
+         ([remap describe-variable] . #'helpful-variable)
+         ([remap describe-symbol] . #'helpful-symbol)
+         ([remap describe-key] . #'helpful-key)))
+#+end_src
+
 * User Interface
+** Font Size
+
+#+begin_src emacs-lisp
+(use-feature emacs
+  :bind (("s-=" . #'global-text-scale-adjust)
+         ("s--" . #'global-text-scale-adjust)
+         ("s-0" . #'global-text-scale-adjust)
+         ("C-=" . #'text-scale-adjust)
+         ("C--" . #'text-scale-adjust)
+         ("C-0" . #'text-scale-adjust))
+  :preface
+  (defvar presentation-mode-font-size 21)
+  (defun presentation-mode ()
+    "Increase the font size for presentation."
+    (interactive)
+    (let* ((current-font-size (/ (face-attribute 'default :height) 10))
+           (new-font-size
+            (if (not (eq current-font-size presentation-mode-font-size))
+                presentation-mode-font-size
+              c/monospace-font-size)))
+      (set-face-attribute 'default nil :height (* new-font-size 10))
+      (set-face-attribute 'variable-pitch nil :height (* new-font-size 10))
+      (redisplay 'force))))
+#+end_src
 
 ** Vertico
 
